@@ -1,5 +1,5 @@
 #include "oaf_callbacks.h"
-#include "openvr_helper.h"
+#include "process_helper.h"
 #include <filesystem>
 #include <format>
 
@@ -18,9 +18,17 @@ rlvr::appfw::OafCallbacks::OafCallbacks() {
   std::wstring rlvrsettings_path = rlvr::Util::GetConcatPath_Utf16(appdata_dir, L"ReLinked VR\\RLVRSettings.json");
   if (fs::exists(rlvrsettings_path)) {
     _rlvrsettings_json = rlvr::appfw::Util::GetJSONFile(rlvrsettings_path);
-    json rlvrsettings_enablesteamvrautostart = _rlvrsettings_json["enableSteamVRAutoStart"];
-    if (rlvrsettings_enablesteamvrautostart.is_boolean()) {
-      _enable_steamvr_autostart = rlvrsettings_enablesteamvrautostart;
+    json rlvrsettings_enablesoftwareautostart = _rlvrsettings_json["enableSoftwareAutoStart"];
+    if (rlvrsettings_enablesoftwareautostart.is_boolean()) {
+      _enable_software_autostart = rlvrsettings_enablesoftwareautostart;
+    }
+    json rlvrsettings_allowotherosftware = _rlvrsettings_json["allowOtherSoftware"];
+    if (rlvrsettings_allowotherosftware.is_boolean()) {
+      _allow_other_software = rlvrsettings_allowotherosftware;
+    }
+    json rlvrsettings_customstartupprogrampath = _rlvrsettings_json["customStartupProgramPath"];
+    if (rlvrsettings_customstartupprogrampath.is_string()) {
+      _custom_startup_program_path = rlvrsettings_customstartupprogrampath;
     }
     json rlvrsettings_autohighpriority = _rlvrsettings_json["autoHighPriority"];
     if (rlvrsettings_autohighpriority.is_boolean()) {
@@ -79,7 +87,8 @@ void rlvr::appfw::OafCallbacks::NewProcess(uint32_t process_id) {
   //}
 
   // Restrict to just SteamVR/vrserver.
-  if (OpenVRHelper::IsProcessVRServer(process_id)) {
+  OAF_SERVICE_LOG("RLVR:Appfw", OAF_LOG_LEVEL_TYPE_INFO, "Oaf_NewProcess: process_id = {}", process_id);
+  if (_allow_other_software || ProcessHelper::IsProcessVRServer(process_id)) {
     OafService_SetTrackingMode(true);
     OafService_SetModalSystemOverlay(false);
     OafService_SetDepthBuffersRequestStatus(false);
@@ -102,7 +111,11 @@ void rlvr::appfw::OafCallbacks::InputEvent(const char* serial_number, oafInputEv
   switch (event_type) {
   case OAF_INPUT_EVENT_TYPE_CONTROLLER:
     if (controller_event_type == OAF_INPUT_CONTROLLER_EVENT_TYPE_OCULUS_BUTTON && value == true) {
-      OpenVRHelper::RunStartup();
+      if (_allow_other_software && !_custom_startup_program_path.empty()) {
+        ProcessHelper::RunProcess(_custom_startup_program_path);
+      } else {
+        ProcessHelper::RunSteamVRStartup();
+      }
     }
     break;
   case OAF_INPUT_EVENT_TYPE_PROXIMITY_SENSOR:
@@ -118,8 +131,12 @@ void rlvr::appfw::OafCallbacks::HMDEvent(const char* serial_number, oafHMDEventT
   //  serial_number, event_type_name, (int32_t)event_type);
   if (event_type == OAF_HMD_EVENT_TYPE_DISPLAY_ATTACHED) {
     OafService_ActivateHeadset(serial_number, 2);
-    if (_enable_steamvr_autostart) {
-      OpenVRHelper::RunStartup();
+    if (_enable_software_autostart) {
+      if (_allow_other_software && !_custom_startup_program_path.empty()) {
+        ProcessHelper::RunProcess(_custom_startup_program_path);
+      } else {
+        ProcessHelper::RunSteamVRStartup();
+      }
     }
   }
 }
@@ -127,8 +144,12 @@ void rlvr::appfw::OafCallbacks::HMDEvent(const char* serial_number, oafHMDEventT
 void rlvr::appfw::OafCallbacks::SetDefaultHeadset(const char* serial_number) {
   OAF_SERVICE_LOG("RLVR:Appfw", OAF_LOG_LEVEL_TYPE_INFO, "Oaf_SetDefaultHeadset: serial_number = {}", serial_number);
   OafService_ActivateHeadset(serial_number, 2);
-  if (_enable_steamvr_autostart) {
-    OpenVRHelper::RunStartup();
+  if (_enable_software_autostart) {
+    if (_allow_other_software && !_custom_startup_program_path.empty()) {
+      ProcessHelper::RunProcess(_custom_startup_program_path);
+    } else {
+      ProcessHelper::RunSteamVRStartup();
+    }
   }
 }
 

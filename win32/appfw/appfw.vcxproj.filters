@@ -17,12 +17,12 @@
     <ClCompile Include="oaf_callbacks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="openvr_helper.cpp">
+    <ClCompile Include="process_helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="openvr_helper.h">
+    <ClInclude Include="process_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="util.h">

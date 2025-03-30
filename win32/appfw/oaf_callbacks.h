@@ -11,7 +11,9 @@ namespace appfw {
 class OafCallbacks : public rlvr::IOafCallbacks {
 private:
   nlohmann::json _rlvrsettings_json;
-  bool _enable_steamvr_autostart = true;
+  bool _enable_software_autostart = true;
+  bool _allow_other_software = false;
+  std::string _custom_startup_program_path;
   bool _auto_high_priority = true;
   bool _use_custom_fps = true;
   int _custom_fps = 90;

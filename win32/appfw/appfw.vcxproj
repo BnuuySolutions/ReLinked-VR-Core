@@ -98,11 +98,11 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="oaf_callbacks.cpp" />
-    <ClCompile Include="openvr_helper.cpp" />
+    <ClCompile Include="process_helper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="oaf_callbacks.h" />
-    <ClInclude Include="openvr_helper.h" />
+    <ClInclude Include="process_helper.h" />
     <ClInclude Include="rlvr_headset.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
