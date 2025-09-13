@@ -20,8 +20,8 @@ int WINAPI main() {
     return -1;
   }
   auto dll_validate_addr = (void*)rlvr::Util::FindPattern(
-    "\x4C\x8B\xDC\x55\x57\x49\x8D\xAB\x00\xF9\xFF\xFF\x48\x81\xEC\x00\x07\x00\x00\x48\x8B\x05\x00\x00\x00\x00",
-    "xxxxxxxx?xxxxxx?xxxxxx???x"
+    "\x4C\x8B\xDC\x55\x00\x49\x8D\xAB\x00\xF9\xFF\xFF\x48\x81\xEC\x00\x07\x00\x00\x48\x8B\x05\x00\x00\x00\x00",
+    "xxxx?xxx?xxxxxx?xxxxxx???x"
   );
   if (!dll_validate_addr) {
     MessageBoxW(nullptr, L"Finding dll_validate_addr pattern failed.", L"svchook", MB_ICONERROR | MB_OK);

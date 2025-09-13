@@ -6,7 +6,8 @@
 // runtime ver 0 = v0.0.1 (initial release)
 // runtime ver 1 = v0.0.2
 // runtime ver 2 = v0.0.3
-#define RUNTIME_VER 2
+// runtime ver 3 = v0.0.4
+#define RUNTIME_VER 3
 
 #define OAF_SERVICE_LOG(category, level, ...) OafService_Log(category, level, std::format(__VA_ARGS__).c_str());
 
@@ -74,6 +75,38 @@ enum oafCallbackType {
 // oculus-runtime: 3056908297774642
 // oculus-drivers: 3681864058615858
 // oculus-diagnostics: 7931351073640758
+
+enum oafServiceType {
+  oafService_ChangeFocus = 3,
+  oafService_ChangeInputFocus = 5,
+  oafService_SetModalSystemOverlay = 7,
+  oafService_SetDepthBuffersRequestStatus = 9,
+  oafService_ActivateHeadset = 24,
+  oafService_Log = 46,
+  oafService_SetTrackingMode = 48,
+  oafService_SetAirLinkPairingResult = 88
+};
+
+enum oafCallbackType {
+  oafCallback_OafServer_TestConnection = 0,
+  oafCallback_OafServer_UploadCrashReports = 1,
+  oafCallback_OafServer_Run = 2,
+  oafCallback_OafServer_TearDown = 3,
+  oafCallback_FetchGatekeeper = 6,
+  oafCallback_NewProcess = 7,
+  oafCallback_GetFPSSettingForHeadset = 9,
+  oafCallback_Shutdown = 15,
+  oafCallback_InputEvent = 16,
+  oafCallback_HMDEvent = 18,
+  oafCallback_SetDefaultHeadset = 59,
+  oafCallback_NotifyAirLinkPairingStart = 71,
+  oafCallback_ConnectIpcRemoteHeadsetClient = 74
+};
+#elif (RUNTIME_VER == 3)
+// Binary IDs:
+// oculus-runtime: 3401418659990269
+// oculus-drivers: 4074027629399497
+// oculus-diagnostics: 23974045368944739
 
 enum oafServiceType {
   oafService_ChangeFocus = 3,
